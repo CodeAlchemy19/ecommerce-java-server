@@ -26,7 +26,7 @@
   <script>
     function submitForm() {
       const student = {
-        
+        id:document.getElementById("id").value,
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
         dob: document.getElementById('dob').value
@@ -42,9 +42,9 @@
         },
         body: JSON.stringify(student)
       })
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
-        console.log("Success:", data);
+        alert(data);
         
       })
       .catch(error => {

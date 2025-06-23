@@ -27,7 +27,7 @@ public class StudentController {
            return ResponseEntity.badRequest().body("Student already exists with "+student.getEmail());
         }
         Student saved=repo.save(student);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok().body("Student created successfully with email "+saved.getEmail());
     }
     @GetMapping
     public List<Student> getAllStudents(){
