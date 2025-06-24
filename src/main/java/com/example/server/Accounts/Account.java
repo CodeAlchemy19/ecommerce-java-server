@@ -11,7 +11,7 @@ public class Account {
     @Id
     private String name;
     private String fatherName;
-    private String userName;
+    
     private LocalDate dob;
 private String email;
 private Long mobileNumber;
@@ -23,7 +23,7 @@ public Account(String name, String fatherName, String userName, LocalDate dob, S
         String address, String password) {
     this.name = name;
     this.fatherName = fatherName;
-    this.userName = userName;
+   
     this.dob = dob;
     this.email = email;
     this.mobileNumber = mobileNumber;
@@ -42,12 +42,7 @@ public String getFatherName() {
 public void setFatherName(String fatherName) {
     this.fatherName = fatherName;
 }
-public String getUserName() {
-    return userName;
-}
-public void setUserName(String userName) {
-    this.userName = userName;
-}
+
 public LocalDate getDob() {
     return dob;
 }

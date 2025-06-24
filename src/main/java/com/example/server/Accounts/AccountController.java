@@ -14,8 +14,9 @@ public class AccountController {
  private AccountRepo account;
  @PostMapping("/signin")
  public ResponseEntity<?> signIn(@RequestBody Account details){
-    if(account.existsByEmail(details.getEmail())){
-       return ResponseEntity.ok("Success");
+   Account accounts=account.findByEmailAndPassword(details.getEmail(),details.getPassword()).orElse(null);
+    if(accounts!=null){
+       return ResponseEntity.ok(accounts);
     }
     return ResponseEntity.badRequest().body("null");
  } 
