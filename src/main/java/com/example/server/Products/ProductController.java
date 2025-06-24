@@ -20,8 +20,8 @@ public class ProductController {
     @Autowired
     private ProductRepo product;
     @PostMapping("/add")
-    public ResponseEntity<?> addProduct(@RequestBody Products products){
-        Products saved=product.save(products);
+    public ResponseEntity<?> addProduct(@RequestBody List<Products> products){
+        List<Products> saved=product.saveAll(products);
         return ResponseEntity.status(HttpStatus.CREATED).body(List.of(saved));
     }
     @GetMapping("/get")
@@ -51,9 +51,12 @@ public class ProductController {
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id){
-        if(id==null){
+        if(!product.existsById(id)){
+           
+            
             return ResponseEntity.badRequest().body("Id not found");
         }
+         product.deleteById(id);
         return ResponseEntity.ok().body("Product deleted");
     }
 }
