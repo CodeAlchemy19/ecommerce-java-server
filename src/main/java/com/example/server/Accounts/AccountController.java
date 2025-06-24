@@ -1,6 +1,9 @@
 package com.example.server.Accounts;
 
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +25,27 @@ public class AccountController {
  } 
  @PostMapping("/signup")
  public ResponseEntity<?> signUp(@RequestBody Account details){
+    Optional<Account> existingEmail=account.findByEmail(details.getEmail());
+    if(existingEmail.isPresent()){
+        return (ResponseEntity<?>) ResponseEntity.status(400);
+    }
     Account saved=account.save(details);
-    return ResponseEntity.ok(saved);
+    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message",saved));
  }
+@PostMapping("/details")
+
+public ResponseEntity<?> getDetails(@RequestBody Map<String, String> payload) {
+    String email = payload.get("email").trim(); // trim to remove extra spaces
+    Optional<Account> accounts = account.findByEmail(email);
+
+    if (accounts.isPresent()) {
+        return ResponseEntity.ok(accounts.get());
+    } else {
+        return ResponseEntity.status(404).body("Account not found with email: " + email);
+    }
+}
+
+
+
+
 }
