@@ -1,74 +1,28 @@
 package com.example.server.Accounts;
 
-import java.util.*;
-
-import com.example.server.Utility.JwtUtil;
-import com.example.server.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/account")
 public class AccountController {
-
     @Autowired
-    private AccountRepo repo;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private AccountService accountService;
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody Account details) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(details.getEmail(), details.getPassword()));
-        } catch (BadCredentialsException exception) {
-            return ResponseEntity.badRequest().body("Invalid credentials");
-        }
-
-        UserDetails userDetails = accountService.loadUserByUsername(details.getEmail());
-        AuthResponse response = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(response);
+ private AccountRepo account;
+ @PostMapping("/signin")
+ public ResponseEntity<?> signIn(@RequestBody Account details){
+   Account accounts=account.findByEmailAndPassword(details.getEmail(),details.getPassword()).orElse(null);
+    if(accounts!=null){
+       return ResponseEntity.ok(accounts);
     }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> signUp(@RequestBody Account details) {
-        Optional<Account> existingEmail = repo.findByEmail(details.getEmail());
-
-        if (existingEmail.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-        }
-       accountService.registerUser(details);
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Account created successfully"));
-    }
-
-    @GetMapping("/details")
-
-    public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body("Invalid token header");
-        }
-
-        String token = authHeader.substring(7); // Remove "Bearer "
-        String email = jwtUtil.extractUserName(token);
-
-        return repo.findByEmail(email)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElse(null);
-    }
-
+    return ResponseEntity.badRequest().body("null");
+ } 
+ @PostMapping("/signup")
+ public ResponseEntity<?> signUp(@RequestBody Account details){
+    Account saved=account.save(details);
+    return ResponseEntity.ok(saved);
+ }
 }
