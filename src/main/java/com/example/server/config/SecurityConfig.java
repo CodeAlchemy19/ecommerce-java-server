@@ -25,9 +25,10 @@ public class SecurityConfig {
         return http.
                 csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cart/**", "/products/**").permitAll()  // 👈 allow public access to /products
-                        .requestMatchers("/auth/**").authenticated()              // 👈 protect /cart
+                        .requestMatchers("/auth/**").permitAll()     // 👈 allow public access
+                        .requestMatchers("/cart/**", "/products/**").permitAll()
                         .anyRequest().authenticated()
+
                 )
 
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

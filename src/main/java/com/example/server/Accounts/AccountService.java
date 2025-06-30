@@ -23,6 +23,7 @@ public class AccountService implements UserDetailsService {
         if(repo.existsByEmail(user.getEmail())){
             return false;
         }
+        user.setId(null);
         user.setPassword(passwordEncoderConfig.passwordEncoder().encode(user.getPassword()));
         repo.save(user);
         return true;
