@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 # Build the jar
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # 🔹 Stage 2: Run the app
 FROM eclipse-temurin:21-jdk
