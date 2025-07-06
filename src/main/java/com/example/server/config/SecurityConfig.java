@@ -12,31 +12,35 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 public class SecurityConfig {
+
     @Autowired
     private AccountService accountService;
+
     @Autowired
     @Lazy
     private JwtUtil jwtUtil;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.
-                csrf(csrf -> csrf.disable())
+        return http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/signin","auth/signup","/cart/**", "/products/**").permitAll()     // 👈 allow public access
-                       
+                        .requestMatchers(
+                            "/auth/signin",
+                            "/auth/signup",
+                            "/cart/**",
+                            "/products/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
-
                 )
-
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cofig) throws Exception{
-        return cofig.getAuthenticationManager();
-    }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 }
