@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         // ✅ Your frontend URLs
         config.setAllowedOrigins(List.of(
-            "https://vkstore2025.netlify.app",
+            "https://vkstoreonline.netlify.app",
             "https://vkstoreadmin.netlify.app"
         ));
 
