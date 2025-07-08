@@ -52,11 +52,11 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message","Account created successfully"));
     }
     @GetMapping("/details")
-    public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authheader){
-        if(authheader==null || !authheader.startsWith("Bearer ")){
+    public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader){
+        if(authHeader==null || !authHeader.startsWith("Bearer ")){
             return ResponseEntity.badRequest().body("Invalid token header");
         }
-        String token=authheader.substring(7);
+        String token=authHeader.substring(7);
         String email=jwtUtil.extractUserName(token);
         return adminRepo.findByEmail(email).map(user->ResponseEntity.ok().body(user)).orElse(null);
     }
