@@ -24,7 +24,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Required if using JWT
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/admin/**","/products/**","/cart/**").permitAll() // Allow public endpoints
+                .requestMatchers("/auth/**", "/admin/signin","/admin/signup","/products/**","/cart/**").permitAll() // Allow public endpoints
                 .anyRequest().authenticated()
             );
         return http.build();
