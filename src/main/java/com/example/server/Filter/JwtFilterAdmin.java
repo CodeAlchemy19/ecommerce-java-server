@@ -1,7 +1,8 @@
 package com.example.server.Filter;
 
 
-import com.example.server.Accounts.AccountService;
+// import com.example.server.Accounts.AccountService;
+import com.example.server.Admin.AdminService;
 import com.example.server.Utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,11 +21,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtFilterAdmin extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtil;
+    // @Autowired
+    // private AccountService accountService;
     @Autowired
-    private AccountService accountService;
+    private AdminService adminService;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
         final String authHeader=request.getHeader("Authorization");
@@ -41,7 +44,7 @@ if (path.equals("/admin/signin") || path.equals("/auth/signin")) {
             token = authHeader.substring(7);
             name = jwtUtil.extractUserName(token);
             if (name != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = accountService.loadUserByUsername(name);
+                UserDetails userDetails = adminService.loadByUsername(name);
                 if (jwtUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
