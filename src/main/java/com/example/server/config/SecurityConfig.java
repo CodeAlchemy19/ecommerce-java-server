@@ -37,7 +37,9 @@ public class SecurityConfig {
         // ✅ Your frontend URLs
         config.setAllowedOrigins(List.of(
             "https://vkstoreonline.netlify.app",
-            "https://vkstoreadmin.netlify.app"
+            "https://vkstoreadmin.netlify.app",
+            "http://localhost:5173/",
+            "http://localhost:5174/"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
