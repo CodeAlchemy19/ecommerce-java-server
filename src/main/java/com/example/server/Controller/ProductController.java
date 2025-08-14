@@ -1,4 +1,4 @@
-package com.example.server.Products;
+package com.example.server.Controller;
 
 import java.util.List;
 
@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.server.Models.Products;
+import com.example.server.Repositories.ProductRepo;
 
 @RestController
 @RequestMapping("/products")

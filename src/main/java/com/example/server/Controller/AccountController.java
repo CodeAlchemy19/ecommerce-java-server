@@ -1,7 +1,10 @@
-package com.example.server.Accounts;
+package com.example.server.Controller;
 
 import java.util.*;
 
+import com.example.server.Models.Account;
+import com.example.server.Repositories.AccountRepo;
+import com.example.server.Services.AccountService;
 import com.example.server.Utility.JwtUtil;
 import com.example.server.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;

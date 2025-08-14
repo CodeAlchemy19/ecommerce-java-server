@@ -1,4 +1,4 @@
-package com.example.server.Student;
+package com.example.server.Controller;
 
 import java.util.*;
 
@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.server.Models.Student;
+import com.example.server.Repositories.StudentRepository;
 @CrossOrigin(origins = "http://localhost:9000")
 @RestController
 @RequestMapping("/students")

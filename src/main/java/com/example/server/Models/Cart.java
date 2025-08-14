@@ -1,4 +1,4 @@
-package com.example.server.Cart;
+package com.example.server.Models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

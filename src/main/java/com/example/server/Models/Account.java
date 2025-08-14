@@ -1,4 +1,4 @@
-package com.example.server.Accounts;
+package com.example.server.Models;
 
 import java.time.LocalDate;
 

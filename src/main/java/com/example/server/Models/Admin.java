@@ -1,4 +1,4 @@
-package com.example.server.Admin;
+package com.example.server.Models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

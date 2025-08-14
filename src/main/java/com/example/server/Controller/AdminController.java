@@ -1,4 +1,4 @@
-package com.example.server.Admin;
+package com.example.server.Controller;
 
 import java.util.Map;
 
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.server.Models.Admin;
+import com.example.server.Repositories.AdminRepo;
+import com.example.server.Services.AdminService;
 import com.example.server.Utility.JwtUtil;
 import com.example.server.dto.AuthResponse;
 

@@ -1,4 +1,6 @@
-package com.example.server.Accounts;
+package com.example.server.Services;
+import com.example.server.Models.Account;
+import com.example.server.Repositories.AccountRepo;
 import com.example.server.config.PasswordEncoderConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

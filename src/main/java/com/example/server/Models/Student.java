@@ -1,4 +1,4 @@
-package com.example.server.Student;
+package com.example.server.Models;
 
 import java.time.LocalDate;
 

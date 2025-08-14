@@ -1,8 +1,7 @@
 package com.example.server.Filter;
 
 
-// import com.example.server.Accounts.AccountService;
-import com.example.server.Admin.AdminService;
+import com.example.server.Services.AdminService;
 import com.example.server.Utility.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

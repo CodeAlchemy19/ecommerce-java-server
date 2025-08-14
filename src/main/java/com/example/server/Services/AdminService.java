@@ -1,10 +1,12 @@
-package com.example.server.Admin;
+package com.example.server.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.server.Models.Admin;
+import com.example.server.Repositories.AdminRepo;
 import com.example.server.config.PasswordEncoderConfig;
 
 @Service

@@ -1,4 +1,4 @@
-package com.example.server.Cart;
+package com.example.server.Controller;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.server.Models.Cart;
+import com.example.server.Repositories.CartRepo;
 
 @RestController
 @RequestMapping("/cart")
