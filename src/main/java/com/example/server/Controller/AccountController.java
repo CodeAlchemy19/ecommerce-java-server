@@ -3,6 +3,7 @@ package com.example.server.Controller;
 import java.util.*;
 
 import com.example.server.Models.Account;
+
 import com.example.server.Repositories.AccountRepo;
 import com.example.server.Services.AccountService;
 import com.example.server.Utility.JwtUtil;
@@ -72,5 +73,19 @@ public class AccountController {
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElse(null);
     }
+     @PutMapping("/update/{email}")
+public ResponseEntity<?> updateAccount(@PathVariable String email, @RequestBody Account updatedAccount) {
+    return repo.findByEmail(email)
+            .map(account -> {
+                // update fields
+                account.setName(updatedAccount.getName());
+                account.setMobileNumber(updatedAccount.getMobileNumber());
+                account.setPassword(updatedAccount.getPassword()); // ⚠️ encode password if needed
+
+                repo.save(account);
+                return ResponseEntity.ok(Map.of("message", "Account updated successfully", "account", account));
+            })
+            .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found")));
+}
 
 }
