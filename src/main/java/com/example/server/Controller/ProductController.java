@@ -3,16 +3,11 @@ package com.example.server.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.server.Models.Products;
 import com.example.server.Repositories.ProductRepo;
@@ -20,25 +15,40 @@ import com.example.server.Repositories.ProductRepo;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+
     @Autowired
     private ProductRepo product;
+
+    // 🟢 Add products and clear cache
     @PostMapping("/add")
-    public ResponseEntity<?> addProduct(@RequestBody List<Products> products){
-        List<Products> saved=product.saveAll(products);
-        return ResponseEntity.status(HttpStatus.CREATED).body(List.of(saved));
+    @CacheEvict(value = { "allProducts", "productById" }, allEntries = true)
+    public ResponseEntity<?> addProduct(@RequestBody List<Products> products) {
+        List<Products> saved = product.saveAll(products);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
+
+    // 🟢 Get all products (cached)
     @GetMapping("/get")
-    public List<Products> getProduct(){
+    @Cacheable(value = "allProducts")
+    public List<Products> getProduct() {
+        System.out.println("Fetching from DB..."); // to verify caching
         return product.findAll();
     }
+
+    // 🟢 Get product by ID (cached per ID)
     @GetMapping("/get/{id}")
-    public List<Products> getProductById(@PathVariable Long id){
-        return List.of(product.findById(id).orElse(null));
+    @Cacheable(value = "productById", key = "#id")
+    public Products getProductById(@PathVariable Long id) {
+        System.out.println("Fetching product ID " + id + " from DB...");
+        return product.findById(id).orElse(null);
     }
+
+    // 🟠 Update product and clear related caches
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id,@RequestBody Products updateProducts){
-        Products products=product.findById(id).orElse(null);
-        if(products!=null){
+    @CacheEvict(value = { "allProducts", "productById" }, allEntries = true)
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Products updateProducts) {
+        Products products = product.findById(id).orElse(null);
+        if (products != null) {
             products.setTitle(updateProducts.getTitle());
             products.setPrice(updateProducts.getPrice());
             products.setDiscountPrice(updateProducts.getDiscountPrice());
@@ -48,18 +58,18 @@ public class ProductController {
             products.setQuantity(updateProducts.getQuantity());
             product.save(products);
             return ResponseEntity.ok("Updated product");
-        
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error to update");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error updating product");
     }
+
+    // 🔴 Delete product and clear caches
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id){
-        if(!product.existsById(id)){
-           
-            
+    @CacheEvict(value = { "allProducts", "productById" }, allEntries = true)
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        if (!product.existsById(id)) {
             return ResponseEntity.badRequest().body("Id not found");
         }
-         product.deleteById(id);
-        return ResponseEntity.ok().body("Product deleted");
+        product.deleteById(id);
+        return ResponseEntity.ok("Product deleted");
     }
 }

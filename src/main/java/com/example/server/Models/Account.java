@@ -1,12 +1,13 @@
 package com.example.server.Models;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import jakarta.persistence.*;
 
 
 @Entity
-public class Account {
+public class Account implements  Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

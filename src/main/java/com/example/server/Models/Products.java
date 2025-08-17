@@ -3,8 +3,10 @@ package com.example.server.Models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.io.Serializable;
+
 @Entity
-public class Products {
+public class Products implements Serializable {
     @Id
     private Long id;
     private String title;

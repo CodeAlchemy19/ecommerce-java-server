@@ -24,7 +24,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Required if using JWT
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/admin/**","/products/**","/cart/**").permitAll() // Allow public endpoints
+                .requestMatchers("/auth/**", "/admin/**","/products/**","/cart/**","/email/**").permitAll() // Allow public endpoints
                 .anyRequest().authenticated()
             );
         return http.build();
@@ -39,7 +39,9 @@ public class SecurityConfig {
             "https://vkstoreonline.netlify.app",
             "https://vkstoreadmin.netlify.app",
             "http://localhost:5173/",
-            "http://localhost:5174/"
+            "http://localhost:5174/",
+                "http://127.0.0.1:5500"
+
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
