@@ -7,6 +7,7 @@ import com.example.server.Models.Account;
 import com.example.server.Repositories.AccountRepo;
 import com.example.server.Services.AccountService;
 import com.example.server.Utility.JwtUtil;
+import com.example.server.config.PasswordEncoderConfig;
 import com.example.server.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AccountController {
-
+    @Autowired
+    private PasswordEncoderConfig passwordEncoderConfig;
     @Autowired
     private AccountRepo repo;
 
@@ -80,7 +82,7 @@ public ResponseEntity<?> updateAccount(@PathVariable String email, @RequestBody 
                 // update fields
                 account.setName(updatedAccount.getName());
                 account.setMobileNumber(updatedAccount.getMobileNumber());
-                account.setPassword(updatedAccount.getPassword()); // ⚠️ encode password if needed
+                account.setPassword(passwordEncoderConfig.passwordEncoder().encode(updatedAccount.getPassword())); // ⚠️ encode password if needed
 
                 repo.save(account);
                 return ResponseEntity.ok(Map.of("message", "Account updated successfully", "account", account));

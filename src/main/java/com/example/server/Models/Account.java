@@ -22,7 +22,7 @@ private String address;
 private String password;
 public Account() {
 }
-public Account(Long id,String name, String fatherName, String userName, LocalDate dob, String email, Long mobileNumber,
+public Account(Long id,String name, String fatherName, LocalDate dob, String email, Long mobileNumber,
         String address, String password) {
     this.id=id;
     this.name = name;
