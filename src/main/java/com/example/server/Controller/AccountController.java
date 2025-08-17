@@ -76,9 +76,8 @@ public class AccountController {
                 .orElse(null);
     }
     @GetMapping("/fetchusers")
-    public ResponseEntity<?> getAllUsers(){
-        List<Account> users=repo.findAll();
-        return ResponseEntity.ok().body(users);
+    public List<Account> getAllUsers(){
+    return repo.findAll();
     }
 
 
