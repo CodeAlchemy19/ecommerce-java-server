@@ -75,6 +75,14 @@ public class AccountController {
                 .map(user -> ResponseEntity.ok().body(user))
                 .orElse(null);
     }
+    @GetMapping("/fetchusers")
+    public ResponseEntity<?> getAllUsers(){
+        List<Account> users=repo.findAll();
+        return ResponseEntity.ok().body(users);
+    }
+
+
+
      @PutMapping("/update/{email}")
 public ResponseEntity<?> updateAccount(@PathVariable String email, @RequestBody Account updatedAccount) {
     return repo.findByEmail(email)
