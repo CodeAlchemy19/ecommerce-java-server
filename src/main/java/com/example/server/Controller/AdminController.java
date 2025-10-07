@@ -1,7 +1,10 @@
 package com.example.server.Controller;
 
+import java.util.List;
 import java.util.Map;
 
+import com.example.server.Models.Account;
+import com.example.server.Repositories.AccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,8 @@ import com.example.server.dto.AuthResponse;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+    @Autowired
+    private AccountRepo repo;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -62,5 +67,13 @@ public class AdminController {
         String token=authHeader.substring(7);
         String email=jwtUtil.extractUserName(token);
         return adminRepo.findByEmail(email).map(user->ResponseEntity.ok().body(user)).orElse(null);
+    }
+    @GetMapping("/allusers")
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String authHeader){
+        if(authHeader==null || !authHeader.startsWith("Bearer ")){
+            return ResponseEntity.badRequest().body("Invalid token");
+        }
+        List<Account> users=repo.findAll();
+        return ResponseEntity.ok(users);
     }
 }
