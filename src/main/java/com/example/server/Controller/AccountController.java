@@ -58,7 +58,7 @@ public class AccountController {
     // ---------------- Sign Up ----------------
     // Clear allUsers cache on new signup
     @PostMapping("/signup")
-    @CacheEvict(value = "allUsers", allEntries = true)
+
     public ResponseEntity<?> signUp(@RequestBody Account details) {
         boolean success = accountService.registerUser(details);
         if (!success) {

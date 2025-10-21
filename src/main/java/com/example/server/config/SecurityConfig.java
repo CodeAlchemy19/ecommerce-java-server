@@ -21,12 +21,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Required if using JWT
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/signin","/auth/signup", "/admin/**","/products/**","/cart/**","/email/**").permitAll() // Allow public endpoints
-                .anyRequest().authenticated()
-            );
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs (use tokens in production)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/auth/**", "/api/register", "/api/login").permitAll()
+                        .anyRequest().authenticated()
+                );
+
         return http.build();
     }
 
@@ -34,20 +36,19 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ Your frontend URLs
+        // Exact frontend URLs (no trailing slashes)
         config.setAllowedOrigins(List.of(
-            "https://vkstoreonline.netlify.app",
-            "https://vkstoreadmin.netlify.app",
-            "http://localhost:5173/",
-            "http://localhost:5174/",
+                "https://vkstoreonline.netlify.app",
+                "https://vkstoreadmin.netlify.app",
+                "http://localhost:5173",
+                "http://localhost:5174",
                 "http://127.0.0.1:5500"
-
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
 
-        // ✅ Required for credentials (cookies/JWT)
+        // Required for cookies/JWT if used
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -56,9 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }
-
