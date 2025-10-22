@@ -113,5 +113,14 @@ public class AccountController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "Account not found")));
     }
+    @DeleteMapping("/delete")
+    public  ResponseEntity<?> deleteUser(@RequestBody String email){
+        int deleted= repo.deleteByEmailCustom(email);
+        if(deleted>0){
+            return ResponseEntity.ok().body("User deleted");
+        }
+         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email id not exists");
+
+    }
 
 }
