@@ -105,7 +105,7 @@ public class AccountController {
                 .map(account -> {
                     account.setName(updatedAccount.getName());
                     account.setMobileNumber(updatedAccount.getMobileNumber());
-                    if(!updatedAccount.getPassword().isEmpty()){
+                    if(updatedAccount.getPassword()!=null){
 
                     account.setPassword(passwordEncoderConfig.passwordEncoder().encode(updatedAccount.getPassword()));
                     }
