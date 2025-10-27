@@ -105,7 +105,10 @@ public class AccountController {
                 .map(account -> {
                     account.setName(updatedAccount.getName());
                     account.setMobileNumber(updatedAccount.getMobileNumber());
+                    if(!updatedAccount.getPassword().isEmpty()){
+
                     account.setPassword(passwordEncoderConfig.passwordEncoder().encode(updatedAccount.getPassword()));
+                    }
                     repo.save(account);
                     account.setPassword(null); // hide password
                     return ResponseEntity.ok(Map.of("message", "Account updated successfully", "account", account));
