@@ -7,7 +7,6 @@ import com.example.server.Models.Account;
 import com.example.server.Repositories.AccountRepo;
 import com.example.server.Services.AccountService;
 import com.example.server.Utility.JwtUtil;
-import com.example.server.config.PasswordEncoderConfig;
 import com.example.server.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -18,14 +17,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AccountController {
-
-    @Autowired
-    private PasswordEncoderConfig passwordEncoderConfig;
 
     @Autowired
     private AccountRepo repo;
@@ -38,6 +35,9 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // ---------------- Sign In ----------------
     @PostMapping("/signin")
@@ -56,22 +56,26 @@ public class AccountController {
     }
 
     // ---------------- Sign Up ----------------
-    // Clear allUsers cache on new signup
     @PostMapping("/signup")
-
     public ResponseEntity<?> signUp(@RequestBody Account details) {
+
+        // Encode password here
+        details.setPassword(passwordEncoder.encode(details.getPassword()));
+
         boolean success = accountService.registerUser(details);
         if (!success) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
         }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Account created successfully"));
     }
 
-    // ---------------- Get User from Token ----------------
+    // ---------------- Get User From Token ----------------
     @GetMapping("/details")
-    @Cacheable(value = "userByEmail", key = "#authHeader.substring(7)")
+    @Cacheable(value = "userByEmail", key = "#email")
     public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader) {
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.badRequest().body("Invalid token header");
         }
@@ -81,10 +85,11 @@ public class AccountController {
 
         return repo.findByEmail(email)
                 .map(user -> {
-                    user.setPassword(null); // hide password in response
+                    user.setPassword(null);
                     return ResponseEntity.ok(user);
                 })
-                .orElse(null);
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body((Account) Map.of("message", "User not found")));
     }
 
     // ---------------- Fetch All Users ----------------
@@ -92,38 +97,54 @@ public class AccountController {
     @Cacheable(value = "allUsers")
     public List<Account> getAllUsers() {
         List<Account> users = repo.findAll();
-        users.forEach(user -> user.setPassword(null)); // hide passwords
+        users.forEach(user -> user.setPassword(null));
         return users;
     }
 
     // ---------------- Update Account ----------------
-    // Clear caches when updating
-    @PutMapping("/update/{email}")
+    @PutMapping("/update")
     @CacheEvict(value = {"allUsers", "userByEmail"}, allEntries = true)
-    public ResponseEntity<?> updateAccount(@PathVariable String email, @RequestBody Account updatedAccount) {
+    public ResponseEntity<?> updateAccount(@RequestParam("email") String email,
+                                           @RequestBody Account updatedAccount) {
+
         return repo.findByEmail(email)
                 .map(account -> {
-                    account.setName(updatedAccount.getName());
-                    account.setMobileNumber(updatedAccount.getMobileNumber());
-                    if(updatedAccount.getPassword()!=null){
+                    if (updatedAccount.getName() != null) {
 
-                    account.setPassword(passwordEncoderConfig.passwordEncoder().encode(updatedAccount.getPassword()));
+                    account.setName(updatedAccount.getName());
                     }
+                    if(updatedAccount.getMobileNumber()!=null){
+
+                    account.setMobileNumber(updatedAccount.getMobileNumber());
+                    }
+
+                    if (updatedAccount.getPassword() != null) {
+                        account.setPassword(passwordEncoder.encode(updatedAccount.getPassword()));
+                    }
+
                     repo.save(account);
-                    account.setPassword(null); // hide password
-                    return ResponseEntity.ok(Map.of("message", "Account updated successfully", "account", account));
+                    account.setPassword(null);
+
+                    return ResponseEntity.ok(
+                            Map.of("message", "Account updated successfully", "account", account)
+                    );
                 })
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "Account not found")));
     }
+
+    // ---------------- Delete User ----------------
     @DeleteMapping("/delete")
-    public  ResponseEntity<?> deleteUser(@RequestBody String email){
-        int deleted= repo.deleteByEmailCustom(email);
-        if(deleted>0){
-            return ResponseEntity.ok().body("User deleted");
+    @CacheEvict(value = {"allUsers", "userByEmail"}, allEntries = true)
+    public ResponseEntity<?> deleteUser(@RequestParam String email) {
+
+        int deleted = repo.deleteByEmailCustom(email);
+
+        if (deleted > 0) {
+            return ResponseEntity.ok("User deleted");
         }
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email id not exists");
 
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Email id not exists");
     }
-
 }

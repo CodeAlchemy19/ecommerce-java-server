@@ -1,22 +1,31 @@
-# 🔹 Stage 1: Build the Spring Boot app
-FROM maven:3.9.6-eclipse-temurin-21 as builder
+# ----------- STAGE 1: BUILD JAR -----------
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
-COPY . .
 
-# Build the jar
-RUN mvn clean package -DskipTests
+# Copy Maven files
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# 🔹 Stage 2: Run the app
+# Download dependencies (cache)
+RUN ./mvnw dependency:go-offline
+
+# Copy source code
+COPY src src
+
+# Build
+RUN ./mvnw clean package -DskipTests
+
+
+# ----------- STAGE 2: RUN APP -----------
 FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-# Copy the jar from the builder stage
+# Copy jar from builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expose port
-EXPOSE 9000
+EXPOSE 8080
 
-# Start the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -17,7 +17,7 @@ public class Account implements  Serializable {
     private LocalDate dob;
 
 private String email;
-@Column(unique=true)
+
 private Long mobileNumber;
 private String address;
 private String password;
