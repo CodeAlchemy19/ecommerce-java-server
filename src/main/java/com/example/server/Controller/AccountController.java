@@ -9,8 +9,7 @@ import com.example.server.Services.AccountService;
 import com.example.server.Utility.JwtUtil;
 import com.example.server.dto.AuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -73,28 +72,32 @@ public class AccountController {
 
     // ---------------- Get User From Token ----------------
     @GetMapping("/details")
-    @Cacheable(value = "userByEmail", key = "#email")
     public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader) {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body("Invalid token header");
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid token header"));
         }
 
         String token = authHeader.substring(7);
         String email = jwtUtil.extractUserName(token);
 
-        return repo.findByEmail(email)
-                .map(user -> {
-                    user.setPassword(null);
-                    return ResponseEntity.ok(user);
-                })
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body((Account) Map.of("message", "User not found")));
+        var optionalUser = repo.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "User not found"));
+        }
+
+        Account user = optionalUser.get();
+        user.setPassword(null);
+        return ResponseEntity.ok(user);
     }
+
+
 
     // ---------------- Fetch All Users ----------------
     @GetMapping("/fetchusers")
-    @Cacheable(value = "allUsers")
+
     public List<Account> getAllUsers() {
         List<Account> users = repo.findAll();
         users.forEach(user -> user.setPassword(null));
@@ -103,7 +106,7 @@ public class AccountController {
 
     // ---------------- Update Account ----------------
     @PutMapping("/update")
-    @CacheEvict(value = {"allUsers", "userByEmail"}, allEntries = true)
+
     public ResponseEntity<?> updateAccount(@RequestParam("email") String email,
                                            @RequestBody Account updatedAccount) {
 
@@ -135,7 +138,7 @@ public class AccountController {
 
     // ---------------- Delete User ----------------
     @DeleteMapping("/delete")
-    @CacheEvict(value = {"allUsers", "userByEmail"}, allEntries = true)
+
     public ResponseEntity<?> deleteUser(@RequestParam String email) {
 
         int deleted = repo.deleteByEmailCustom(email);
