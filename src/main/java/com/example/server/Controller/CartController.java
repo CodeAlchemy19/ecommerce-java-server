@@ -41,7 +41,7 @@ public ResponseEntity<?> addToCart(@RequestBody Cart item) {
        String token=header.substring(7);
        String email=jwtUtil.extractUserName(token);
 
-       Optional<Cart> items=cart.findByEmail(email);
+       Optional<List<Cart>> items=cart.findByEmail(email);
        if(items.isEmpty()){
            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message","No products found in the cart for this email"));
        }
