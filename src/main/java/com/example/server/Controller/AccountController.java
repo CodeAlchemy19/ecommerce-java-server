@@ -59,7 +59,7 @@ public class AccountController {
     public ResponseEntity<?> signUp(@RequestBody Account details) {
 
         // Encode password here
-        details.setPassword(passwordEncoder.encode(details.getPassword()));
+
 
         boolean success = accountService.registerUser(details);
         if (!success) {
@@ -72,6 +72,8 @@ public class AccountController {
 
     // ---------------- Get User From Token ----------------
     @GetMapping("/details")
+
+
     public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader) {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
