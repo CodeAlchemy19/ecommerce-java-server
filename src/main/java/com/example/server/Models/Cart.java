@@ -8,6 +8,7 @@ public class Cart {
     @Id
     private Long id;
     private String title;
+    private String email;
     private Double price;
     private Double discountPrice;
     private Double rating;
@@ -20,7 +21,7 @@ public class Cart {
     }
 
     public Cart(Long id, String title, Double price, Double discountPrice, Double rating, String description,
-            String image, String category, Long quantity) {
+            String image, String category, Long quantity,String email) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -30,6 +31,7 @@ public class Cart {
         this.image = image;
         this.category = category;
         this.quantity = quantity;
+        this.email=email;
     }
 
     public Long getId() {
@@ -87,5 +89,13 @@ public class Cart {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

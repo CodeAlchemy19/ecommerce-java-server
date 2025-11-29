@@ -1,15 +1,12 @@
 package com.example.server.Controller;
 import java.util.*;
+
+import com.example.server.Filter.JwtFilter;
+import com.example.server.Utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.server.Models.Cart;
 import com.example.server.Repositories.CartRepo;
@@ -17,6 +14,8 @@ import com.example.server.Repositories.CartRepo;
 @RestController
 @RequestMapping("/cart")
 public class CartController {
+    @Autowired
+    private JwtUtil jwtUtil;
     @Autowired
    private CartRepo cart;
    @PostMapping("/add")
@@ -35,8 +34,18 @@ public ResponseEntity<?> addToCart(@RequestBody Cart item) {
 }
 
    @GetMapping("/get")
-   public List<Cart> getProducts(){
-    return cart.findAll();
+   public ResponseEntity<?> getProducts(@RequestHeader("Authorization") String header){
+       if(header==null || !header.startsWith("Bearer ")){
+           return ResponseEntity.badRequest().body(Map.of("message","Invalid token provided"));
+       }
+       String token=header.substring(7);
+       String email=jwtUtil.extractUserName(token);
+
+       Optional<Cart> items=cart.findByEmail(email);
+       if(items.isEmpty()){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message","No products found in the cart for this email"));
+       }
+       return ResponseEntity.ok(items);
    }
    @PutMapping("/update")
 public ResponseEntity<?> updateProduct(@RequestBody Cart item) {

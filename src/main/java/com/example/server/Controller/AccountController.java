@@ -72,8 +72,6 @@ public class AccountController {
 
     // ---------------- Get User From Token ----------------
     @GetMapping("/details")
-
-
     public ResponseEntity<?> getUserFromToken(@RequestHeader("Authorization") String authHeader) {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
