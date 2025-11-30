@@ -135,7 +135,15 @@ public class AccountController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "Account not found")));
     }
-
+    //-----------------Check email before sending otp--------
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam("email") String email){
+        boolean emailExists=repo.existsByEmail(email);
+        if(emailExists){
+           return ResponseEntity.badRequest().body(Map.of("message","User already existed with the email"));
+        }
+        return ResponseEntity.ok().body(Map.of("message","User allowed to signup"));
+    }
     // ---------------- Delete User ----------------
     @DeleteMapping("/delete")
 
