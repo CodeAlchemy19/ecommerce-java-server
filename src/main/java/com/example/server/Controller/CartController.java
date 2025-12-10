@@ -42,6 +42,7 @@ public ResponseEntity<?> addToCart(@RequestBody Cart item) {
        String email=jwtUtil.extractUserName(token);
 
        Optional<List<Cart>> items=cart.findByEmail(email);
+       System.out.println(items+" "+email);
        if(items.isEmpty()){
            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message","No products found in the cart for this email"));
        }
@@ -55,15 +56,15 @@ public ResponseEntity<?> updateProduct(@RequestBody Cart item) {
         Cart cartItem = existingCartItem.get();
         cartItem.setQuantity(item.getQuantity());
         cart.save(cartItem);
-        return ResponseEntity.ok("Cart item updated");
+        return ResponseEntity.ok(Map.of("message","Cart item updated"));
     } else {
-        return ResponseEntity.badRequest().body("Cart item not found");
+        return ResponseEntity.badRequest().body(Map.of("message","Item not found"));
     }
 }
 
    @DeleteMapping("/delete/{id}")
    public ResponseEntity<?> deleteProduct(@PathVariable Long id){
     cart.deleteById(id);
-    return ResponseEntity.ok("Deleted");
+    return ResponseEntity.ok(Map.of("message","Item deleted from cart"));
    }
 }
