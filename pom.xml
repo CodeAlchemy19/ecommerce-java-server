@@ -13,9 +13,9 @@
 	</parent>
 
 	<groupId>com.example</groupId>
-	<artifactId>auth</artifactId>
+	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>auth</name>
+	<name>server</name>
 
 	<properties>
 		<java.version>21</java.version>

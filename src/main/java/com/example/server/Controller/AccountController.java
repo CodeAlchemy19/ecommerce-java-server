@@ -149,7 +149,7 @@ public class AccountController {
     // ---------------- Delete User ----------------
     @DeleteMapping("/delete")
 
-    public ResponseEntity<?> deleteUser(@RequestParam String email) {
+    public ResponseEntity<?> deleteUser(@RequestParam("email") String email) {
 
         int deleted = repo.deleteByEmailCustom(email);
 
