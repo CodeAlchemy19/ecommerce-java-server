@@ -11,25 +11,40 @@ import com.example.server.config.PasswordEncoderConfig;
 
 @Service
 public class AdminService {
+
     @Autowired
     private AdminRepo adminRepo;
-    Admin admin;
+
     @Autowired
     private PasswordEncoderConfig passwordEncoderConfig;
-    public UserDetails loadByUsername(String email) throws UsernameNotFoundException{
-        admin=adminRepo.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User not found"));
+
+    // ❌ Remove the global Admin variable
+    // Admin admin;   // REMOVE THIS
+
+
+    public UserDetails loadByUsername(String email) throws UsernameNotFoundException {
+
+        // ✔ Load admin fresh every time
+        Admin admin = adminRepo.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         return org.springframework.security.core.userdetails.User.builder()
-        .username(admin.getEmail())
-        .password(admin.getPassword())
-        .roles("ADMIN")
-        .build();
+                .username(admin.getEmail())
+                .password(admin.getPassword()) // hashed password stored
+                .roles("ADMIN")
+                .build();
     }
-    public boolean registerUser(Admin admin){
-        if(adminRepo.existsByEmail(admin.getEmail())){
+
+    public boolean registerUser(Admin admin) {
+        if (adminRepo.existsByEmail(admin.getEmail())) {
             return false;
         }
+
         admin.setId(null);
+
+        // ✔ Encode password before saving
         admin.setPassword(passwordEncoderConfig.passwordEncoder().encode(admin.getPassword()));
+
         adminRepo.save(admin);
         return true;
     }
