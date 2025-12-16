@@ -158,6 +158,6 @@ public class AccountController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Email id not exists.Please enter a valid email");
+                .body("Email id not exists");
     }
 }
