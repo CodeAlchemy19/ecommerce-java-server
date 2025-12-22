@@ -1,13 +1,15 @@
 package com.example.server.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-public class Cart {
+@Table(name = "orders")
+public class Orders {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long orderId;
     private Long id;
     private String title;
     private String email;
@@ -18,6 +20,4 @@ public class Cart {
     private String image;
     private String category;
     private Long quantity;
-
-
 }

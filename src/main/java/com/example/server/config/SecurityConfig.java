@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         // ✅ Public endpoints
-                        .requestMatchers("/health/**","/auth/**", "/products/**", "/cart/**", "/email/**", "/admin/**","/health")
+                        .requestMatchers("/health/**","/auth/**", "/products/**", "/cart/**", "/email/**", "/admin/**","/health","/wishlist/**","/orders/**")
                         .permitAll()
 
                         // ✅ Everything else requires authentication
