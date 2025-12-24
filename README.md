@@ -17,7 +17,7 @@ The backend of VKStore is built with Spring Boot 3+, MySQL, and secured using JW
 bash
 Copy
 Edit
-git clone https://github.com/trivikram-coder/ecommerce-java-server.git
+git clone https://github.com/CodeAlchemy19/ecommerce-java-server.git
 cd ecommerce-java-server
 2. Configure Database
 Make sure MySQL is installed and running.
