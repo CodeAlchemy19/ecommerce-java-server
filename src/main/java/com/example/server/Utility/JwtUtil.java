@@ -16,10 +16,11 @@ public class JwtUtil {
     private final String SECRET = "your-very-secure-secret-key-must-be-32+chars";
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
     public AuthResponse generateToken(UserDetails userDetails) {
+        long TWENTY_DAYS = 1000L * 60 * 60 * 24 * 20;
         String token= Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + TWENTY_DAYS)) // 10 hours
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         return new AuthResponse(token);
